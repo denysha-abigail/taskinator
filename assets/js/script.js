@@ -3,6 +3,7 @@ var taskIdCounter = 0;
 // DOM object reference
 var formEl = document.querySelector("#task-form");
 var tasksToDoEl = document.querySelector("#tasks-to-do");
+var pageContentEl = document.querySelector("#page-content");
 
 // Create a task function
 var taskFormHandler = function(event){
@@ -101,5 +102,51 @@ var createTaskActions = function(taskId) {
 
 // Event listener function
 formEl.addEventListener("submit", taskFormHandler);
+
+var taskButtonHandler = function(event) {
+    // Get target element from even
+    var targetEl = event.target;
+
+    // Edit button was clicked
+    if (targetEl.matches(".edit-btn")) {
+        var taskId = targetEl.getAttribute("data-task-id");
+        editTask(taskId);
+    }
+
+    if (event.target.matches(".delete-btn")) {
+        // Get the element's task id
+        var taskId = event.target.getAttribute("data-task-id");
+        deleteTask(taskId);
+    }
+};
+
+var editTask = function(taskId) {
+    console.log("editing task #" + taskId);
+
+    // Get task list item element
+    var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
+
+    // Get content form task name and type
+    // taskSelected.querySelector only searches within the taskSelected element; this will help to narrow search
+    var taskName = taskSelected.querySelector("h3.task-name").textContent;
+    var taskType = taskSelected.querySelector("span.task-type").textContent;
+
+    // Make task name and type to appear in the form inputs
+    document.querySelector("input[name='task-name']").value = taskName;
+    document.querySelector("select[name='task-type']").value = taskType;
+
+    // Update text of submit button to say "Save Task"
+    document.querySelector("#save-task").textContent = "Save Task";
+
+    formEl.setAttribute("data-task-id", taskId);
+    
+}
+
+var deleteTask = function(taskId) {
+    var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
+    taskSelected.remove();
+};
+
+pageContentEl.addEventListener("click", taskButtonHandler);
 
 
