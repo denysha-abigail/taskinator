@@ -6,6 +6,7 @@ var tasksToDoEl = document.querySelector("#tasks-to-do");
 var pageContentEl = document.querySelector("#page-content");
 var tasksInProgressEl = document.querySelector("#tasks-in-progress");
 var tasksCompletedEl = document.querySelector("#tasks-completed");
+var tasks = [];
 
 // Create a task function
 var taskFormHandler = function(event){
@@ -36,12 +37,15 @@ var isEdit = formEl.hasAttribute("data-task-id");
     // Package up data as an object
         var taskDataObj = {
             name: taskNameInput,
-            type: taskTypeInput
+            type: taskTypeInput,
+            status: "to do"
         };
 
 // Send it as an argument to createTaskEl
 // Will only get called if isEdit is false
     createTaskEl(taskDataObj);
+    console.log(taskDataObj);
+    console.log(taskDataObj.status);
     }
 };
 
@@ -52,6 +56,16 @@ var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId +
 // Set new values
 taskSelected.querySelector("h3.task-name").textContent = taskName;
 taskSelected.querySelector("span.task-type").textContent = taskType;
+
+// Loop through tasks array and task object with new content
+// At each iteration of this for loop, we are checking to see if that individual task's id property matches the taskId argument that we passed into completeEditTask()
+// Because taskId is a string and tasks[id].id is a number, we need to make sure we are comparing a number to a number by wrapping the taskId with a parseInt() function and convert it to a number for the comparison
+for (var i = 0; i < tasks.length; i++) {
+    if (tasks[i].id === parseInt(taskId)) {
+        tasks[i].name = taskName;
+        tasks[i].type = taskType;
+    }
+};
 
 alert("Task Updated!");
 
@@ -83,6 +97,13 @@ var createTaskEl = function(taskDataObj) {
 
 // Add entire list item to list
     tasksToDoEl.appendChild(listItemEl);
+
+// Add value of taskIdCounter to the taskDataObj argument variable
+    taskDataObj.id = taskIdCounter;
+
+// Add entire object to the tasks array
+// This method adds any content between the parentheses to the end of the specified array
+    tasks.push(taskDataObj);
 
 // Increase task counter for next unique id
     taskIdCounter++;
@@ -150,6 +171,13 @@ var taskStatusChangeHandler = function(event) {
     } else if (statusValue === "completed") {
         tasksCompletedEl.appendChild(taskSelected);
     }
+
+// Update task's status in tasks array
+for (var i = 0; i < tasks.length; i++) {
+    if (tasks[i].id === parseInt(taskId)) {
+        tasks[i].status = statusValue;
+    }
+}
 };
 
 // Event listener function
@@ -197,6 +225,19 @@ var editTask = function(taskId) {
 var deleteTask = function(taskId) {
     var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
     taskSelected.remove();
+
+// Create new empty array to hold updated list of tasks
+    var updatedTaskArr = [];
+
+// Loop through current tasks
+    for (var i = 0; i < tasks.length; i++) {
+    // If tasks[i].id doesn't match the value of taskId, let's keep that task and push it into the new array
+        if (tasks[id] !== parseInt(taskId)) {
+            updatedTaskArr.push(tasks[id]);
+        }
+    }
+// Reassign tasks array to be the same as updatedTaskArr
+    tasks = updatedTaskArr;
 };
 
 pageContentEl.addEventListener("click", taskButtonHandler);
