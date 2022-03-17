@@ -186,9 +186,6 @@ var taskStatusChangeHandler = function (event) {
     saveTasks();
 };
 
-// Event listener function
-formEl.addEventListener("submit", taskFormHandler);
-
 var taskButtonHandler = function (event) {
     // Get target element from even
     var targetEl = event.target;
@@ -252,9 +249,35 @@ var saveTasks = function () {
     // Convert the tasks array into a string for saving in localStorage
     // JSON = JavaScript Object Notation - a means of organizing and structuring data that transferred from one place to another
     localStorage.setItem("tasks", JSON.stringify(tasks));
-}
+};
 
+// Gets task items from localStorage
+// Converts tasks from the string format back into an array of objects
+// Iterate through a tasks array and create task elements on the page from it
+var loadTasks = function () {
+    var savedTasks = localStorage.getItem("tasks");
+
+    // We can check for a null value in an if statement by using (variableName === null) or (!variableName) as the condition
+    if (!savedTasks) {
+        return false;
+    }
+    // Get tasks back into an array of objects
+    // JSON.stringify -> converts array of objects to a string; JSON.parse -> converts string to an array of objects
+    savedTasks = JSON.parse(savedTasks);
+    // Loop through savedTasks array
+    for (var i = 0; i < savedTasks.length; i++) {
+        // Pass each task object into the 'createTaskEl()' function
+        createTaskEl(savedTasks[i]);
+    }
+};
+
+// Create a new task
+formEl.addEventListener("submit", taskFormHandler);
+
+// For edit and delete buttons
 pageContentEl.addEventListener("click", taskButtonHandler);
+
+// For changing the status
 pageContentEl.addEventListener("change", taskStatusChangeHandler);
 
-
+loadTasks();
